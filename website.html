@@ -92,9 +92,82 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+	.toggle {
+ 	   position: relative;
+ 	   display: inline-block;
+ 	   width: 70px;
+ 	   height: 30px;
+ 	   margin-left: 5px; /* Adjust to space between time and toggle */
+	}
+
+	.toggle input {
+	    display: none;
+	}
+
+	.slider {
+	    background-color: rgb(151, 199, 199);
+	    position: absolute;
+	    width: 70px;
+	    height: 30px;
+	    border-radius: 50px;
+	    cursor: pointer;
+	    transition: .7s;
+	}
+
+	.slider:before {
+	    content: "";
+ 	    position: inherit;
+	    background-color: aliceblue;
+	    left: 4px;
+	    top: 2.5px;
+	    width: 25px;
+	    height: 25px;
+	    border-radius: 50%;
+	    transition: .7s;
+	    font-size: x-small;
+	    display: flex;
+	    align-items: center;
+	    justify-content: center;
+	    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+	    font-weight: bold;
+	}
+
+	input:checked + .slider {
+	    background-color: rgb(11, 124, 86);
+	}
+
+	input:checked + .slider:before {
+ 	   transform: translateX(35px);
+	   content: "";
+ 	   background-color: wheat;
+	}
+	/* Dark Mode Styles */
+.dark-mode {
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.dark-mode .header {
+    background-color: #333333;
+    border-bottom: 1px solid #444444;
+}
+
+.dark-mode .camera-feed {
+    background-color: #222222;
+    border-color: #444444;
+}
+
+.dark-mode .camera-label {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #000000;
+}
+
+.dark-mode .time {
+    color: #ffffff; /* Change current time text color to white in dark mode */
+}
     </style>
 </head>
-<body>
+<body id="body">
 	
     <!-- Header -->
     <div class="header">
@@ -105,6 +178,11 @@
         <div class="time" id="current-time">
             23-09-2024, 14:16:06
         </div>
+
+	<label class="toggle">
+            <input type="checkbox">
+            <span class="slider"></span>
+    	</label>
     </div>
 
     <div class="camera-feed-grid">
@@ -185,6 +263,17 @@
     <script>
 	let idleTimeout; // Stores the timeout function
 	let allStreamsLoaded = false; // Tracks if all streams have loaded
+
+	const toggleSwitch = document.querySelector('.toggle input');
+    	const body = document.getElementById('body');
+
+    	    toggleSwitch.addEventListener('change', () => {
+            if (toggleSwitch.checked) {
+                body.classList.add('dark-mode');
+            } else {
+                body.classList.remove('dark-mode');
+            }
+    	});
 
 	function resetIdleTimer() {
         if (allStreamsLoaded) {
