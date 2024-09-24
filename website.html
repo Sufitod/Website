@@ -183,22 +183,59 @@
     </div>
 
     <script>
-        function hideSpinner(camNumber) {
+	let idleTimeout; // Stores the timeout function
+	let allStreamsLoaded = false; // Tracks if all streams have loaded
+
+	function resetIdleTimer() {
+        if (allStreamsLoaded) {
+            clearTimeout(idleTimeout);
+            idleTimeout = setTimeout(goBack, 30000); // 30 seconds of inactivity
+            }
+    	}
+
+	// Function to go back to the previous page
+    	function goBack() {
+            window.history.back(); // Go back to the previous page
+    	}
+
+	// Track mouse movements to reset the timer
+    	document.addEventListener('mousemove', resetIdleTimer);
+
+        // This function is called when each stream has loaded
+    	function hideSpinner(camNumber) {
             document.getElementById('spinner' + camNumber).style.display = 'none';
-            // Hide the label when the livestream is successfully loaded
             document.getElementById('label' + camNumber).style.display = 'none';
             document.getElementById('spinner' + camNumber).parentElement.style.backgroundColor = 'black';
-        }
 
-        function showPlaceholder(imageElement, camNumber) {
+        // Check if all spinners are hidden
+        checkAllStreamsLoaded();
+    	}
+
+	// This function checks if all spinners are hidden (streams loaded)
+    	function checkAllStreamsLoaded() {
+            const spinners = document.querySelectorAll('.loading-spinner');
+            const allHidden = Array.from(spinners).every(spinner => spinner.style.display === 'none');
+
+        if (allHidden) {
+            allStreamsLoaded = true; // Mark that all streams are loaded
+            resetIdleTimer(); // Start the idle timer
+            }
+    	}
+
+        // Function to show placeholder if the stream fails to load
+    	function showPlaceholder(imageElement, camNumber) {
             document.getElementById('spinner' + camNumber).style.display = 'none';
             const offlineBadge = document.createElement('div');
             offlineBadge.className = 'offline-badge';
             offlineBadge.innerText = '⚠️ Offline';
             imageElement.parentElement.appendChild(offlineBadge);
-        }
 
-	function updateTime() {
+            // Still check if all streams that are online have loaded
+            checkAllStreamsLoaded();
+    	}
+
+	// Update the current time every second
+    	function updateTime() {
             const now = new Date();
             const formattedTime = now.toLocaleString("en-GB", { 
                 day: '2-digit', 
@@ -209,7 +246,7 @@
                 second: '2-digit' 
             });
             document.getElementById("current-time").innerText = formattedTime;
-        }
+    	}
         setInterval(updateTime, 1000);
     </script>
 </body>
