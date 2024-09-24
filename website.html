@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stream</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f8f8f8;
+            padding: 10px 20px;
+            border-bottom: 1px solid #ccc;
+        }
+        .header img {
+            width: 50px;
+            height: 50px;
+        }
+        .header .time {
+            font-size: 18px;
+            color: #333;
+        }
+        .header .controls {
+            display: flex;
+            align-items: center;
+        }
+        .camera-feed-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* 3 columns per row */
+            gap: 0px; /* No gap between columns */
+            padding: 0px;
+            margin: 0 auto; /* Center the grid */
+        }
+        .camera-feed {
+            position: relative;
+            border: 2px solid white; /* White border for the camera frames */
+            background-color: white; /* White background when livestream is not loading */
+            border-radius: 10px;
+            overflow: hidden;
+            padding-bottom: 56.25%; /* Aspect ratio for 16:9 */
+        }
+        .camera-feed img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain; /* Ensures the image fits in the container without being cropped */
+        }
+        .camera-label {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 18px;
+            background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+            padding: 5px 10px;
+            border-radius: 5px;
+            z-index: 10; /* Ensure the label is always on top */
+        }
+        .offline-badge {
+            position: absolute;
+            bottom: 10px;
+            left: 80px; /* Move offline badge next to the label */
+            background-color: red;
+            color: white;
+            padding: 5px 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            z-index: 10; /* Ensure the offline badge is on top */
+        }
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            border: 5px solid #ccc;
+            border-top-color: #333;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+	
+    <!-- Header -->
+    <div class="header">
+        <!-- Logo Section -->
+        <img src="logo.png" alt="JKR Logo">
+        
+        <!-- Date and Time -->
+        <div class="time" id="current-time">
+            23-09-2024, 14:16:06
+        </div>
+    </div>
+
+    <div class="camera-feed-grid">
+	<!-- Camera 1 - J1P1 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner1"></div>
+            <img src="https://dynacamera.lol:8088/videostreams/1/stream" onload="hideSpinner(1)" onerror="showPlaceholder(this, 1)" />
+            <div class="camera-label" id="label1">J1P1</div>
+        </div>
+	<!-- Camera 2 - J1P2 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner2"></div>
+            <img src="https://dynacamera.lol:8088/videostreams/2/stream" onload="hideSpinner(2)" onerror="showPlaceholder(this, 2)" />
+            <div class="camera-label" id="label2">J1P2</div>
+        </div>
+	<!-- Camera 3 - J1P3 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner3"></div>
+            <img src="https://dynacamera.lol:8088/videostreams/3/stream" onload="hideSpinner(3)" onerror="showPlaceholder(this, 3)" />
+            <div class="camera-label" id="label3">J1P3</div>
+        </div>
+	<!-- Camera 3 - J1P4 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner4"></div>
+            <img src="https://dynacamera.lol:8088/videostreams/4/stream" onload="hideSpinner(4)" onerror="showPlaceholder(this, 4)" />
+            <div class="camera-label" id="label4">J1P4</div>
+        </div>
+        <!-- Camera 5 - J3P1 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner5"></div>
+            <img src="https://jkrterj3.site:8088/videostreams/1/stream" onload="hideSpinner(5)" onerror="showPlaceholder(this, 5)" />
+            <div class="camera-label" id="label5">J3P1</div>
+        </div>
+        <!-- Camera 6 - J3P2 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner6"></div>
+            <img src="https://jkrterj3.site:8088/videostreams/2/stream" onload="hideSpinner(6)" onerror="showPlaceholder(this, 6)" />
+            <div class="camera-label" id="label6">J3P2</div>
+        </div>
+        <!-- Camera 7 - J3P3 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner7"></div>
+            <img src="https://jkrterj3.site:8088/videostreams/3/stream" onload="hideSpinner(7)" onerror="showPlaceholder(this, 7)" />
+            <div class="camera-label" id="label7">J3P3</div>
+        </div>
+        <!-- Camera 8 - J3P4 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner8"></div>
+            <img src="https://jkrterj3.site:8088/videostreams/4/stream" onload="hideSpinner(8)" onerror="showPlaceholder(this, 8)" />
+            <div class="camera-label" id="label8">J3P4</div>
+        </div>
+        <!-- Camera 9 - J5P1 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner9"></div>
+            <img src="https://jkrterj5.site:8088/videostreams/1/stream" onload="hideSpinner(9)" onerror="showPlaceholder(this, 9)" />
+            <div class="camera-label" id="label9">J5P1</div>
+        </div>
+        <!-- Camera 10 - J5P2 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner10"></div>
+            <img src="https://jkrterj5.site:8088/videostreams/2/stream" onload="hideSpinner(10)" onerror="showPlaceholder(this, 10)" />
+            <div class="camera-label" id="label10">J5P2</div>
+        </div>
+        <!-- Camera 11 - J5P3 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner11"></div>
+            <img src="https://jkrterj5.site:8088/videostreams/3/stream" onload="hideSpinner(11)" onerror="showPlaceholder(this, 11)" />
+            <div class="camera-label" id="label11">J5P3</div>
+        </div>
+        <!-- Camera 12 - J5P4 -->
+        <div class="camera-feed">
+            <div class="loading-spinner" id="spinner12"></div>
+            <img src="https://jkrterj5.site:8088/videostreams/4/stream" onload="hideSpinner(12)" onerror="showPlaceholder(this, 12)" />
+            <div class="camera-label" id="label12">J5P4</div>
+        </div>
+    </div>
+
+    <script>
+        function hideSpinner(camNumber) {
+            document.getElementById('spinner' + camNumber).style.display = 'none';
+            // Hide the label when the livestream is successfully loaded
+            document.getElementById('label' + camNumber).style.display = 'none';
+            document.getElementById('spinner' + camNumber).parentElement.style.backgroundColor = 'black';
+        }
+
+        function showPlaceholder(imageElement, camNumber) {
+            document.getElementById('spinner' + camNumber).style.display = 'none';
+            const offlineBadge = document.createElement('div');
+            offlineBadge.className = 'offline-badge';
+            offlineBadge.innerText = '⚠️ Offline';
+            imageElement.parentElement.appendChild(offlineBadge);
+        }
+
+	function updateTime() {
+            const now = new Date();
+            const formattedTime = now.toLocaleString("en-GB", { 
+                day: '2-digit', 
+                month: '2-digit', 
+                year: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit', 
+                second: '2-digit' 
+            });
+            document.getElementById("current-time").innerText = formattedTime;
+        }
+        setInterval(updateTime, 1000);
+    </script>
+</body>
+</html>
